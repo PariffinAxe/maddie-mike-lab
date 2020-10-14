@@ -1,28 +1,47 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Characters</h1>
+    <div class="main">
+      <search-bar :characters='characters'></search-bar>
+      <!-- <character-list :characters='characters'></character-list> -->
+      <character-detail :character='selectedCharacter'></character-detail>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import CharacterList from './components/CharacterList.vue'
+import CharacterDetail from './components/CharacterDetail.vue'
+import { eventBus } from './main.js'
+import SearchBar from './components/SearchBar.vue'
 
 export default {
   name: 'App',
+  data(){
+    return {
+      characters: [],
+      selectedCharacter: null,
+    }
+  },
   components: {
-    HelloWorld
+    "character-list": CharacterList,
+    "character-detail": CharacterDetail,
+    "search-bar": SearchBar
+  },
+  mounted(){
+    fetch('https://rickandmortyapi.com/api/character/')
+    .then(res => res.json())
+    .then(characters => this.characters = characters.results)
+    eventBus.$on('character-select', (character) => {
+      this.selectedCharacter = character
+    })
   }
+  
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  body {
+    background-color: antiquewhite;
+  }
 </style>
